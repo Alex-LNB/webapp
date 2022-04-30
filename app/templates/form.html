@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+{% from 'helpers/_helpers.html' import render_field %}
+
+{% block container %}
+<div class="col-12">
+    <h3>Registro de datos perosnales y sintomas</h3>
+</div>
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <div class="form-row">
+        <div class="form-group col-12 col-md-8">
+            {{ render_field(form.name, class='form-control', placeholder='Nombre') }}
+        </div>
+        <div class="form-group col-6 col-md-2">
+            {{ render_field(form.age, class='form-control', placeholder='Edad') }}
+        </div>
+        <div class="form-group col-6 col-md-2">
+            {{ render_field(form.temperature, class='form-control', step=0.1, placeholder='Temperatura') }}
+        </div>
+        <div class="form-group col-12 col-md-6">
+            {{ render_field(form.phone, class='form-control', placeholder='Telefono') }}
+        </div>
+        <div class="form-group col-12 col-md-6">
+            {{ render_field(form.email, class='form-control', placeholder='Correo') }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-10 col-md-5">
+            <label for="" class="form-check-label"> {{form.disease_chk.label}} </label>
+        </div>
+        <div class="form-check col-2 col-md-1" data-toggle='collapse' data-target='#diseaseID' aria-expanded="false">
+            {{ form.disease_chk(class='form-check-input') }}
+        </div>
+        <div class="form-group col-12 col-md-6 collapse" id="diseaseID">
+            {{ render_field(form.disease, class='form-control', placeholder='Especifique la enfermedad') }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-12 col-md-6">
+            <label for="" class="form-check-label"><strong>Condiciones</strong></label>
+            {% for nest in form.conditions %}
+            <div class="form-check">
+                {{ nest(class_='form-check-input') }}
+                <label for="" class="form-check-label"> {{nest.label}} </label>
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                {{ render_field(form.observations, class='form-control', placeholder='Especifique') }}
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-6">
+            <label for="" class="form-check-label"><strong>Comorbilidades</strong></label>
+            {% for nest in form.comorbidities %}
+            <div class="form-check">
+                {{ nest(class_='form-check-input') }}
+                <label for="" class="form-check-label"> {{nest.label}} </label>
+            </div>
+            {% endfor %}
+            <div class="form-check" data-toggle='collapse' data-target='#otherID' aria-expanded="false">
+                {{ form.other_chk(class='form-check-input') }}
+                <label class="form-check-label"> {{form.other_chk.label}} </label>
+            </div>
+            <div class="form-group collapse" id="otherID">
+                {{ render_field(form.other, class='form-control', placeholder='Especifique') }}
+            </div>
+        </div>
+    </div>
+    <div class="form-check">
+        {{ form.accept(class='form-check-input') }}
+        <label for="" class="form-check-label"> {{form.accept.label}} </label>
+    </div>
+    <button type="submit" class="btn btn-primary" name="button">
+        Registrar
+    </button>
+</form>
+{% endblock %}

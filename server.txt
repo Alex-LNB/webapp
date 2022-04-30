@@ -1,0 +1,13 @@
+server {
+
+    listen 80;
+    server_name 192.168.100.15;
+    
+    location / {
+    
+    include proxy_params;
+    proxy_pass http://unix:/home/alejandro/webapp/webapp.sock;
+
+    }
+
+}

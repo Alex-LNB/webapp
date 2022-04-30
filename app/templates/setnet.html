@@ -1,0 +1,70 @@
+{% extends 'layout.html' %}
+{% from 'helpers/_helpers.html' import render_field %}
+
+{% block container %}
+<div class="col-12">
+    <h3>Configuracion de red</h3>
+</div>
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <div class="form-row">
+
+        <div class="col-6">
+            <label>Interfaz: {{net.interface}}</label>
+        </div>
+        <div class="col-6">
+            <label>Hostname: {{net.hostname}}</label>
+        </div>
+        <div class="col-6">
+            <label>Enrutamiento: {{net.dhcp}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.dhcp, class='form-control') }}
+        </div>
+        <div class="col-6">
+            <label>Direccion IP: {{net.address}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.address, class='form-control') }}
+        </div>
+        <div class="col-6">
+            <label>Mascara de red: {{net.netmask}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.netmask, class='form-control') }}
+        </div>
+        <div class="col-6">
+            <label>Puerta de enlace: {{net.gateway}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.gateway, class='form-control') }}
+        </div>
+        <div class="col-6">
+            <label>DNS 1: {{net.dns1}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.dns1, class='form-control') }}
+        </div>
+        <div class="col-6">
+            <label>DNS 2: {{net.dns2}}</label>
+        </div>
+        <div class="form-group col-6">
+            {{ render_field(form.dns2, class='form-control') }}
+        </div>
+
+        <div class="form-group col-12">
+            {{ render_field(dt.ntp, class='form-control') }}
+        </div>
+        <div class="form-group col-12">
+            {{ render_field(dt.dt, class='form-control') }}
+        </div>
+        <div class="form-group col-12">
+            {{ render_field(dt.zn, class='form-control') }}
+        </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary" name="button">
+        Actualizar
+    </button>
+</form>
+{% endblock %}
