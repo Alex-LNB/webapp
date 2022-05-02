@@ -88,11 +88,11 @@ class Network():
 
     @classmethod
     def apply_netplan(cls):
-        sub0 = subprocess.run('/bin/pwd', shell=True, capture_output=True, text=True)
-        ruta = sub0.stdout.strip()+'/set_netplan.py'
-        subX = subprocess.run(f'/bin/ls', shell=True, capture_output=True, text=True)
-        Network.logerr(f'10code:{sub0.returncode}\nout:{sub0.stdout}-{ruta}-{subX.stdout}-\nerr:{sub0.stderr}\n')
-        sub1 = subprocess.run(f'/usr/bin/python3.7 set_netplat.py', shell=True, capture_output=True, text=True)
+        #sub0 = subprocess.run('/bin/pwd', shell=True, capture_output=True, text=True)
+        #ruta = sub0.stdout.strip()+'/set_netplan.py'
+        #subX = subprocess.run(f'/bin/ls', shell=True, capture_output=True, text=True)
+        #Network.logerr(f'10code:{sub0.returncode}\nout:{sub0.stdout}-{ruta}-{subX.stdout}-\nerr:{sub0.stderr}\n')
+        sub1 = subprocess.run(f'/usr/bin/python3 set_netplat.py', shell=True, capture_output=True, text=True)
         Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout}\nerr:{sub1.stderr}\n')
         if sub1.returncode == 0:
             return 'Netplan ejecutado con exito', 0
@@ -101,7 +101,7 @@ class Network():
     
     @classmethod
     def logerr(cls, msj):
-        origen = '/home/alejandro/webapp/logerr.txt'
+        origen = 'logerr.txt'
         try:
             archi=open(origen, mode='a+')
             archi.write(msj)

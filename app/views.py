@@ -118,6 +118,16 @@ def logout():
     flash('Cerraste session')
     return redirect(url_for('.login'))
 
+@page.route('/setdate', methods=['GET','POST'])
+@login_required
+def setdate():
+    if not current_user.is_admin:
+        flash('No tiene permisos de administrador')
+        redirect(url_for('.lista'))
+    dtl = Time_Local.get_timelocal()
+    form = DatetimeForm(obj=dtl)
+    return render_template('setdate.html', title='Datetime', form=form)
+
 @page.route('/setnet', methods=['GET','POST'])
 @login_required
 def setnet():
@@ -126,15 +136,13 @@ def setnet():
         redirect(url_for('.lista'))
     net = Network.get_net(interface=interface)
     form = NetworkForm(request.form, obj=net)
-    dtl = Time_Local.get_timelocal()
-    dt = DatetimeForm(obj=dtl)
     if request.method == 'POST' and form.validate():
         if form.dhcp.data == 'dhcp':
             #x = Network.upnet_dhcp(interface=interface)
             pass
         elif form.dhcp.data == 'static':
-            #x = Network.upnet_static(interface=interface, address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
             x=0
+            #x = Network.upnet_static(interface=interface, address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
         if x == 0:
             #y, z= Network.apply_netplan()
             y, z = 0, 0
@@ -144,6 +152,6 @@ def setnet():
             flash(f'Configuracion de red actualizada - {y}')
             return redirect(url_for('.lista'))
         else:
-            flash(f'Fallo la configuracion de red - {x}')
+            flash(f'Fallo la configuracion de red - {y}')
             return redirect(url_for('.lista'))
-    return render_template('setnet.html', title='Network', net=net, form=form, dt=dt)
+    return render_template('setnet.html', title='Network', net=net, form=form)
