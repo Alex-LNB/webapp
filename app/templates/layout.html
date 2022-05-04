@@ -19,29 +19,29 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.index')}}">Index</a>
+                    <a class="nav-link" href="{{url_for('.index')}}">Inicio</a>
                 </li>
                 {% if current_user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.lista')}}">List</a>
+                    <a class="nav-link" href="{{url_for('.lista')}}">Lista de registros</a>
                 </li>
                 {% if current_user.is_admin %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.register')}}">Register</a>
+                    <a class="nav-link" href="{{url_for('.register')}}">Nuevo usuario</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.setnet')}}">Setnet</a>
+                    <a class="nav-link" href="{{url_for('.setnet')}}">Network</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.setdate')}}">Setdate</a>
+                    <a class="nav-link" href="{{url_for('.setdate')}}">Hora y fecha</a>
                 </li>
                 {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.logout')}}">Logout</a>
+                    <a class="nav-link" href="{{url_for('.logout')}}">Cerrar sesión</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{url_for('.login')}}">Login</a>
+                    <a class="nav-link" href="{{url_for('.login')}}">Iniciar sesión</a>
                 </li>
                 {% endif %}
             </ul>
@@ -73,5 +73,8 @@
     </div>
     {% block container %}
     {% endblock %}
+    <div class="container">
+        <p> <br> <br> </p>
+    </div>
 </div>
 {% endblock %}

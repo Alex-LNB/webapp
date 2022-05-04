@@ -34,9 +34,13 @@ class Network():
         dhcp = buff[6]
         sub3 = subprocess.run(f'/usr/bin/nmcli dev show {interface} | /bin/grep DNS', shell=True, capture_output=True, text=True)
         #Network.logerr(f'03code:{sub3.returncode}\nout:{sub3.stdout}\nerr:{sub3.stderr}\n')
-        buff = sub3.stdout.split()
-        dns1 = buff[1]
-        dns2 = buff[3]
+        buff = sub3.stdout.strip().split('\n')
+        if len(buff)==1:
+            dns1, dns2 = buff[0].split()[1], ''
+        elif len(buff)==2:
+            dns1, dns2 = buff[0].split()[1], buff[1].split()[1]
+        else:
+            dns1, dns2 = '', ''
         print(f'-{hostname},{address},{netmask},{dhcp},{gateway},{dns1},{dns2}-')
         net = Network(interface=interface,hostname=hostname,address=address,netmask=netmask,gateway=gateway,dhcp=dhcp,dns1=dns1,dns2=dns2)
         net.disabled = net.is_dhcp()
@@ -44,9 +48,9 @@ class Network():
 
     def is_dhcp(self):
         if self.dhcp=='dhcp':
-            return 'disabled'
+            return True
         else:
-            return ''
+            return False
 
     @classmethod
     def upnet_dhcp(cls, interface):
@@ -92,8 +96,9 @@ class Network():
         #ruta = sub0.stdout.strip()+'/set_netplan.py'
         #subX = subprocess.run(f'/bin/ls', shell=True, capture_output=True, text=True)
         #Network.logerr(f'10code:{sub0.returncode}\nout:{sub0.stdout}-{ruta}-{subX.stdout}-\nerr:{sub0.stderr}\n')
-        sub1 = subprocess.run(f'/usr/bin/python3 set_netplat.py', shell=True, capture_output=True, text=True)
-        Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout}\nerr:{sub1.stderr}\n')
+        sub1=subprocess.run(["/usr/sbin/netplan apply"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #sub1 = subprocess.run(f'/usr/bin/python3 set_netplat.py', shell=True, capture_output=True, text=True)
+        Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout.decode("UTF-8")}\nerr:{sub1.stderr.decode("UTF-8")}\n')
         if sub1.returncode == 0:
             return 'Netplan ejecutado con exito', 0
         else:
@@ -136,3 +141,20 @@ class Time_Local():
         for zone in buff:
             tup.append((zone,zone))
         return tup
+
+    @classmethod
+    def set_timelocal(cls, ntp='yes', dt='', zn=''):
+        if ntp=='yes':
+            sub0 = subprocess.run('/usr/bin/timedatectl set-ntp yes', shell=True, capture_output=True, text=True)
+            if sub0.returncode==0:
+                return f'Hora y fecha actualizada.{sub0.stdout}'
+            else:
+                return f'Fallo la configuracion.{sub0.stderr}'
+        else:
+            sub0 = subprocess.run('/usr/bin/timedatectl set-ntp no', shell=True, capture_output=True, text=True)
+            sub1 = subprocess.run(f"/usr/bin/timedatectl set-time '{dt}'", shell=True, capture_output=True, text=True)
+            sub2 = subprocess.run(f"/usr/bin/timedatectl set-timezone '{zn}'", shell=True, capture_output=True, text=True)
+            if sub0.returncode==0 and sub1.returncode==0 and sub2.returncode==0:
+                return f'Hora y fecha actualizada.{sub0.stdout}.{sub1.stdout}.{sub2.stdout}'
+            else:
+                return f'Fallo la configuracion.{sub0.stderr}-{ntp}-.{sub1.stderr}-{dt}-.{sub2.stderr}-{zn}-'

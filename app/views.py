@@ -125,8 +125,12 @@ def setdate():
         flash('No tiene permisos de administrador')
         redirect(url_for('.lista'))
     dtl = Time_Local.get_timelocal()
-    form = DatetimeForm(obj=dtl)
-    return render_template('setdate.html', title='Datetime', form=form)
+    form = DatetimeForm(request.form, obj=dtl)
+    if request.method == 'POST' and form.validate():
+        msj = Time_Local.set_timelocal(form.ntp.data,form.dt.data,form.zn.data)
+        flash(f'{msj}')
+        return redirect(url_for('.setdate'))
+    return render_template('setdate.html', title='Datetime', form=form, dtl=dtl)
 
 @page.route('/setnet', methods=['GET','POST'])
 @login_required
@@ -138,11 +142,11 @@ def setnet():
     form = NetworkForm(request.form, obj=net)
     if request.method == 'POST' and form.validate():
         if form.dhcp.data == 'dhcp':
-            #x = Network.upnet_dhcp(interface=interface)
+            x = Network.upnet_dhcp(interface=interface)
             pass
         elif form.dhcp.data == 'static':
             x=0
-            #x = Network.upnet_static(interface=interface, address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
+            x = Network.upnet_static(interface=interface, address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
         if x == 0:
             #y, z= Network.apply_netplan()
             y, z = 0, 0
