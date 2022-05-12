@@ -3,9 +3,9 @@ from flask import render_template, request, flash, redirect, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from . import login_manager
-from .forms import LoginForm, RegUserForm, UserForm, RegisterForm, NetworkForm, DatetimeForm
+from .forms import ApForm, LoginForm, RegUserForm, UserForm, RegisterForm, NetworkForm, DatetimeForm
 from .models import User, Person, Condi, Comorbidity
-from .set_network import Network, Time_Local
+from .set_network import AccessPoint, Network, Time_Local
 from .consts import interface
 
 page = Blueprint('page',__name__)
@@ -138,18 +138,32 @@ def setnet():
     if not current_user.is_admin:
         flash('No tiene permisos de administrador')
         redirect(url_for('.lista'))
-    net = Network.get_net(interface=interface)
+    ap = AccessPoint.get_ap()
+    form = ApForm(request.form, obj=ap)
+    ethe = Network.get_net(interface=interface['ether'])
+    wifi = Network.get_net(interface=interface['wifi'], wifi=True)
+    if request.method == 'POST':
+        buff = AccessPoint.set_ap(form.status.data)
+        flash(f'{buff}')
+        return redirect(url_for('.setnet'))
+    return render_template('setnet.html', title='Network', form=form, ethe=ethe, wifi=wifi)
+
+@page.route('/setnet/ethernet', methods=['GET','POST'])
+@login_required
+def setethe():
+    if not current_user.is_admin:
+        flash('No tiene permisos de administrador')
+        redirect(url_for('.lista'))
+    net = Network.get_net(interface=interface['ether'])
     form = NetworkForm(request.form, obj=net)
     if request.method == 'POST' and form.validate():
         if form.dhcp.data == 'dhcp':
-            x = Network.upnet_dhcp(interface=interface)
+            x = Network.upnet_dhcp(interface=interface['ether'])
             pass
         elif form.dhcp.data == 'static':
-            x=0
-            x = Network.upnet_static(interface=interface, address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
+            x = Network.upnet_static(interface=interface['ether'], address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
         if x == 0:
-            #y, z= Network.apply_netplan()
-            y, z = 0, 0
+            y, z= Network.apply_netplan()
             if z == 0:
                 #z = Network.del_netold(interface=interface, address=net.address, netmask=net.netmask)
                 pass
@@ -158,4 +172,30 @@ def setnet():
         else:
             flash(f'Fallo la configuracion de red - {y}')
             return redirect(url_for('.lista'))
-    return render_template('setnet.html', title='Network', net=net, form=form)
+    return render_template('setethe.html', title='Ethernet', net=net, form=form)
+
+@page.route('/setnet/wifi', methods=['GET','POST'])
+@login_required
+def setwifi():
+    if not current_user.is_admin:
+        flash('No tiene permisos de administrador')
+        redirect(url_for('.lista'))
+    net = Network.get_net(interface=interface['wifi'],wifi=True)
+    form = NetworkForm(request.form, obj=net)
+    if request.method == 'POST' and form.validate():
+        if form.dhcp.data == 'dhcp':
+            x = Network.upnet_dhcp(interface=interface['wifi'], wifi=True, ssid=form.ssid.data, password=form.password.data)
+            pass
+        elif form.dhcp.data == 'static':
+            x = Network.upnet_static(interface=interface['wifi'], address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data, wifi=True, ssid=form.ssid.data, password=form.password.data)
+        if x == 0:
+            y, z= Network.apply_netplan()
+            if z == 0:
+                #z = Network.del_netold(interface=interface, address=net.address, netmask=net.netmask)
+                pass
+            flash(f'Configuracion de red actualizada - {y}')
+            return redirect(url_for('.lista'))
+        else:
+            flash(f'Fallo la configuracion de red - {y}')
+            return redirect(url_for('.lista'))
+    return render_template('setwifi.html', title='Wifi', net=net, form=form)

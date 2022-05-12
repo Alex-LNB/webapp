@@ -34,4 +34,7 @@ comorbidity_labels = [
     'Enfermedad cardiaca.'
 ]
 
-interface = 'enp1s0'
+interface = {
+    'ether' : 'enp1s0',
+    'wifi' : 'wlp2s0'
+}

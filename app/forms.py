@@ -134,8 +134,15 @@ class NetworkForm(Form):
         validators.DataRequired(),
         validators.IPAddress(),
     ], render_kw={disabled:''})
+    ssid = StringField('SSID')
+    password = StringField('Password-SSID')
 
 class DatetimeForm(Form):
     ntp = SelectField('Obtener automaticamente', choices=[('yes','Si'),('no','No')])
     dt = DateTimeField('Fecha y hora')
     zn = SelectField('Zona horaria', choices=Time_Local.get_timezones())
+
+class ApForm(Form):
+    status = SelectField('Punto de acceso (Hotspot)', choices=[('active','Activado'),('inactive','Desactivado'),('activating','Activando...')])
+    ssid = StringField('AP_SSID')
+    password = StringField('AP_PASSWORD')
