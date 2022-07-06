@@ -118,13 +118,13 @@ class Network():
         #ruta = sub0.stdout.strip()+'/set_netplan.py'
         #subX = subprocess.run(f'/bin/ls', shell=True, capture_output=True, text=True)
         #Network.logerr(f'10code:{sub0.returncode}\nout:{sub0.stdout}-{ruta}-{subX.stdout}-\nerr:{sub0.stderr}\n')
-        sub1=subprocess.run(["/usr/sbin/netplan apply"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub1=subprocess.run(["/usr/sbin/netplan apply"], shell=True, capture_output=True, text=True)
         #sub1 = subprocess.run(f'/usr/bin/python3 set_netplat.py', shell=True, capture_output=True, text=True)
-        Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout.decode("UTF-8")}\nerr:{sub1.stderr.decode("UTF-8")}\n')
+        Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout}\nerr:{sub1.stderr}\n')
         if sub1.returncode == 0:
-            return 'Netplan ejecutado con exito', 0
+            return f'Netplan ejecutado con exito. {sub1.stdout}', 0
         else:
-            return 'Netplan fallo la ejecucion', 1
+            return f'Netplan fallo la ejecucion. {sub1.stderr}', 1
     
     @classmethod
     def logerr(cls, msj):

@@ -4,11 +4,11 @@ def set_netplat():
     #sub0=subprocess.run(["/usr/sbin/netplan apply"], shell=True, capture_output=True, text=True)
     sub0=subprocess.run(["/usr/sbin/netplan apply"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if sub0.returncode != 0:
-        print(f"Fallo Netplan: {sub0.stdout.decode('UTF-8')} {sub0.stderr.decode('UTF-8')}")
+        print(f"Fallo Netplan: {sub0.stdout} {sub0.stderr}")
     else:
         #sub1=subprocess.run(["/bin/systemctl restart networking.service"], shell=True, capture_output=True, text=True)
         sub1=subprocess.run(["/bin/systemctl restart networking.service"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(f"Fallo Netplan: {sub0.stdout.decode('UTF-8')} {sub0.stderr.decode('UTF-8')} {sub1.stdout.decode('UTF-8')} {sub1.stderr.decode('UTF-8')}")
+        print(f"Fallo Netplan: {sub0.stdout} {sub0.stderr} {sub1.stdout} {sub1.stderr}")
 
 
 

@@ -126,14 +126,8 @@ class NetworkForm(Form):
     ], render_kw={disabled:''})
     #dhcp = BooleanField('DHCP', default= "checked")
     dhcp = SelectField('Enrutamiento', choices=[('dhcp','dhcp'),('static','static')])
-    dns1 = StringField('DNS 1',[
-        validators.DataRequired(),
-        validators.IPAddress(),
-    ], render_kw={disabled:''})
-    dns2 = StringField('DNS 2',[
-        validators.DataRequired(),
-        validators.IPAddress(),
-    ], render_kw={disabled:''})
+    dns1 = StringField('DNS 1')
+    dns2 = StringField('DNS 2')
     ssid = StringField('SSID')
     password = StringField('Password-SSID')
 
