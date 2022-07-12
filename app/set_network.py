@@ -149,7 +149,7 @@ class Time_Local():
         sub0 = subprocess.run('/usr/bin/timedatectl status | /bin/grep zone', shell=True, capture_output=True, text=True)
         buff = sub0.stdout.strip().split()
         zn = buff[2]
-        sub1 = subprocess.run('/usr/bin/timedatectl status | /bin/grep timesyncd', shell=True, capture_output=True, text=True)
+        sub1 = subprocess.run("/usr/bin/timedatectl status | /bin/grep 'timesyncd\|NTP'", shell=True, capture_output=True, text=True)
         buff = sub1.stdout.strip().split()
         ntp = buff[2]
         dtl = Time_Local(dt=dt, zn=zn, ntp=ntp)
