@@ -1,3 +1,5 @@
+# Servicio que ejecuta la aplicación en una instancia de Gunicorn
+
 [Unit]
 Description=Gunicorn instance to serve webapp
 After=network.target
@@ -5,9 +7,9 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/home/alejandro/webapp
-Environment="PATH=/home/alejandro/webapp/env/bin"
-ExecStart=/home/alejandro/webapp/env/bin/gunicorn --workers 1 --bind unix:webapp.sock -m 007 wsgi:app
+WorkingDirectory=/{ruta absoluta del proyecto}/webapp
+Environment="PYTHONPATH=/{ruta absoluta de los paquetes python del proyecto}/python3.7/site-packages"
+ExecStart=/{ruta absoluta de los ejecutables python del proyecto}/bin/gunicorn --workers 1 --bind unix:webapp.sock -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target

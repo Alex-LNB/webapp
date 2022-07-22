@@ -1,13 +1,11 @@
+# Servidor para Nginx
+
 server {
-
     listen 80;
-    server_name 192.168.100.15;
-    
-    location / {
-    
-    include proxy_params;
-    proxy_pass http://unix:/home/alejandro/webapp/webapp.sock;
-
+    listen [::]:80;
+    server_name 0.0.0.0;    
+    location / {    
+        include proxy_params;
+        proxy_pass http://unix:/{ruta absoluta del proyecto}/webapp/webapp.sock;
     }
-
 }

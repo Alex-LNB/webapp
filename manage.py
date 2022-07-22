@@ -2,7 +2,7 @@ from app import create_app
 from flask_script import Manager
 from config import config
 
-config_class = config['development']
+config_class = config['implement']
 app = create_app(config_class)
 manager = Manager(app)
 

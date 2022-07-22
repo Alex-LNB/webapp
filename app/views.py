@@ -56,7 +56,7 @@ def form():
             Person.set_comor(per.id, comor)        
         flash('Registro exitoso') # Se envia el mensaje de exito
         return redirect(url_for('.index')) # Redirecciona a Index
-    return render_template('form.html', title='Form', form=form) # Se devuelve el html renderizado y se envia 'title' que contiene el titulo de la pagina, 'form' que contiene el formulario
+    return render_template('register/form.html', title='Form', form=form) # Se devuelve el html renderizado y se envia 'title' que contiene el titulo de la pagina, 'form' que contiene el formulario
 
 @page.route('/login', methods=['GET','POST'])
 def login():
@@ -72,7 +72,7 @@ def login():
         else: 
             flash('Usuario y/o contraseña invalidos', 'error')
             return redirect(url_for('.login'))
-    return render_template('login.html', title='Login', form=form)
+    return render_template('auth/login.html', title='Login', form=form)
 
 @page.route('/register', methods=['GET','POST'])
 @login_required
@@ -82,13 +82,13 @@ def register():
         user = User.create_element(form.username.data, form.password.data)
         flash(f'Usuario {user.username} creado')
         return redirect(url_for('.register'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('auth/register.html', title='Register', form=form)
 
 @page.route('/user/<int:user_id>')
 @login_required
 def show_user(user_id):
     user = User.get_by_id(user_id)
-    return render_template('show_user.html', title='User', user=user)    
+    return render_template('auth/show_user.html', title='User', user=user)    
 
 @page.route('/user/edit/<int:user_id>', methods=['GET','POST'])
 @login_required
@@ -97,12 +97,12 @@ def edit_user(user_id):
     if not (current_user.id == user.id or current_user.is_admin):
         flash('No tiene permiso para editar este usuario')
         return redirect(url_for('.lista'))
-    form = UserForm(request.form)
+    form = UserForm(request.form, obj=user)
     if request.method == 'POST' and form.validate():
         user = User.update_element(user.id,form.name.data,form.phone.data,form.email.data)
         if user:
             flash(f'Usuario {user.username} actualizado')
-    return render_template('user_edit.html', title='Edit User', form=form, user=user)
+    return render_template('auth/user_edit.html', title='Edit User', form=form, user=user)
 
 @page.route('/list')
 @page.route('/list/<int:page>')
@@ -110,7 +110,7 @@ def edit_user(user_id):
 def lista(page=1, per_page=5):
     pagination = Person.get_all(page, per_page)
     pers = pagination.items
-    return render_template('list.html', title='Lista', pers=pers, pagination=pagination, page=page)
+    return render_template('register/list.html', title='Lista', pers=pers, pagination=pagination, page=page)
 
 @page.route('/logout')
 def logout():
@@ -130,7 +130,7 @@ def setdate():
         msj = Time_Local.set_timelocal(form.ntp.data,form.dt.data,form.zn.data)
         flash(f'{msj}')
         return redirect(url_for('.setdate'))
-    return render_template('setdate.html', title='Datetime', form=form, dtl=dtl)
+    return render_template('config/setdate.html', title='Datetime', form=form, dtl=dtl)
 
 @page.route('/setnet', methods=['GET','POST'])
 @login_required
@@ -146,7 +146,7 @@ def setnet():
         buff = AccessPoint.set_ap(form.status.data)
         flash(f'{buff}')
         return redirect(url_for('.setnet'))
-    return render_template('setnet.html', title='Network', form=form, ethe=ethe, wifi=wifi)
+    return render_template('config/setnet.html', title='Network', form=form, ethe=ethe, wifi=wifi)
 
 @page.route('/setnet/ethernet', methods=['GET','POST'])
 @login_required
@@ -172,7 +172,7 @@ def setethe():
         else:
             flash(f'Fallo la configuracion de red - {y}')
             return redirect(url_for('.lista'))
-    return render_template('setethe.html', title='Ethernet', net=net, form=form)
+    return render_template('config/setethe.html', title='Ethernet', net=net, form=form)
 
 @page.route('/setnet/wifi', methods=['GET','POST'])
 @login_required
@@ -198,4 +198,4 @@ def setwifi():
         else:
             flash(f'Fallo la configuracion de red - {y}')
             return redirect(url_for('.lista'))
-    return render_template('setwifi.html', title='Wifi', net=net, form=form)
+    return render_template('config/setwifi.html', title='Wifi', net=net, form=form)

@@ -2,29 +2,36 @@
 {% from 'helpers/_helpers.html' import render_field %}
 
 {% block container %}
-<div class="col-12">
-    <h3>Configuracion de red</h3>
-</div>
-<form method="post">
-    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-    <div class="form-row">
-        <div class="form-group col-12 col-md-12">
-            {{ render_field(form.status, class='form-control') }}
-        </div>
-        <div class="form-group col-12 col-md-6">
-            {{ render_field(form.ssid, class='form-control', disabled='') }}
-        </div>
-        <div class="form-group col-12 col-md-6">
-            {{ render_field(form.password, class='form-control', disabled='') }}
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary" name="button">
-        Actualizar
-    </button>
-</form>
 <div class="row">
-    <div class="col-12 col-md-12">
-        <b> <br> <strong>Conexiones a internet</strong> <br> <br> </b>
+    <div class="col-12">
+        <h2>Configuración de Red</h2>
+    </div>
+    <div class="col-12">
+        <h3>Punto de acceso</h3>
+    </div>
+    <div class="col-12">
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-12">
+                    {{ render_field(form.status, class='form-control') }}
+                </div>
+                <div class="form-group col-12 col-md-12">
+                    <button type="submit" class="btn btn-primary" name="button">
+                        Actualizar
+                    </button>
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    {{ render_field(form.ssid, class='form-control', disabled='') }}
+                </div>
+                <div class="form-group col-12 col-md-6">
+                    {{ render_field(form.password, class='form-control', disabled='') }}
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-12">
+        <h3>Conexiones a Internet</h3>
     </div>
     <div class="col-12 col-md-6">
         <ul class="list-group">

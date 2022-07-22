@@ -35,6 +35,6 @@ comorbidity_labels = [
 ]
 
 interface = {
-    'ether' : 'enp1s0',
-    'wifi' : 'wlp2s0'
+    'ether' : 'eth0',
+    'wifi' : 'wlan0'
 }

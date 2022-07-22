@@ -6,7 +6,12 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/webapp_db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+class ImplementConfig(Config):
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/webapp_db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 config = {
     'development' : DevelopmentConfig,
-    'default' : DevelopmentConfig
+    'implement' : ImplementConfig
 }
