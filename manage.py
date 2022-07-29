@@ -4,7 +4,7 @@ from config import config
 
 config_class = config['implement']
 app = create_app(config_class)
-manager = Manager(app)
 
 if __name__ == '__main__':
+    manager = Manager(app)
     manager.run()
