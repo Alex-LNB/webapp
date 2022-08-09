@@ -137,6 +137,6 @@ class DatetimeForm(Form):
     zn = SelectField('Zona horaria', choices=Time_Local.get_timezones())
 
 class ApForm(Form):
-    status = SelectField('Punto de acceso (Hotspot)', choices=[('active','Activado'),('inactive','Desactivado'),('activating','Activando...')])
+    status = SelectField('Punto de acceso (Hotspot)', choices=[('active','Activado'),('inactive','Desactivado')])
     ssid = StringField('AP_SSID')
     password = StringField('AP_PASSWORD')

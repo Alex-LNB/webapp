@@ -144,7 +144,8 @@ def setnet():
     wifi = Network.get_net(interface=interface['wifi'], wifi=True)
     if request.method == 'POST':
         buff = AccessPoint.set_ap(form.status.data)
-        flash(f'{buff}')
+        y, z= Network.apply_netplan()
+        flash(f'{buff} - {y}')
         return redirect(url_for('.setnet'))
     return render_template('config/setnet.html', title='Network', form=form, ethe=ethe, wifi=wifi)
 
@@ -159,18 +160,14 @@ def setethe():
     if request.method == 'POST' and form.validate():
         if form.dhcp.data == 'dhcp':
             x = Network.upnet_dhcp(interface=interface['ether'])
-            pass
         elif form.dhcp.data == 'static':
             x = Network.upnet_static(interface=interface['ether'], address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data)
         if x == 0:
             y, z= Network.apply_netplan()
-            if z == 0:
-                #z = Network.del_netold(interface=interface, address=net.address, netmask=net.netmask)
-                pass
             flash(f'Configuracion de red actualizada - {y}')
             return redirect(url_for('.lista'))
         else:
-            flash(f'Fallo la configuracion de red - {y}')
+            flash(f'Fallo la configuracion de red - {y}','error')
             return redirect(url_for('.lista'))
     return render_template('config/setethe.html', title='Ethernet', net=net, form=form)
 
@@ -185,17 +182,13 @@ def setwifi():
     if request.method == 'POST' and form.validate():
         if form.dhcp.data == 'dhcp':
             x = Network.upnet_dhcp(interface=interface['wifi'], wifi=True, ssid=form.ssid.data, password=form.password.data)
-            pass
         elif form.dhcp.data == 'static':
             x = Network.upnet_static(interface=interface['wifi'], address=form.address.data, netmask=form.netmask.data, gateway=form.gateway.data, dns1=form.dns1.data, dns2=form.dns2.data, wifi=True, ssid=form.ssid.data, password=form.password.data)
         if x == 0:
             y, z= Network.apply_netplan()
-            if z == 0:
-                #z = Network.del_netold(interface=interface, address=net.address, netmask=net.netmask)
-                pass
             flash(f'Configuracion de red actualizada - {y}')
             return redirect(url_for('.lista'))
         else:
-            flash(f'Fallo la configuracion de red - {y}')
+            flash(f'Fallo la configuracion de red - {y}','error')
             return redirect(url_for('.lista'))
     return render_template('config/setwifi.html', title='Wifi', net=net, form=form)

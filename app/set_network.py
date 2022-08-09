@@ -70,10 +70,10 @@ class Network():
     def upnet_dhcp(cls, interface, wifi=False, ssid='', password=''):
         if wifi:
             origen = "/etc/netplan/set-network-wifi.yaml"
-            doc = f'# Let NetworkManager manage all devices on this system\nnetwork:\n  version: 2\n  renderer: NetworkManager\n  wifis:\n    {interface}:\n      dhcp4: yes\n      access-points:\n        "{ssid}":\n          password: "{password}"'
+            doc = f'# Configuración de red wifi\nnetwork:\n  version: 2\n  wifis:\n    {interface}:\n      dhcp4: yes\n      access-points:\n        "{ssid}":\n          password: "{password}"'
         else:
             origen = "/etc/netplan/set-network-ethernet.yaml"
-            doc = f'# Let NetworkManager manage all devices on this system\nnetwork:\n  version: 2\n  renderer: NetworkManager\n  ethernets:\n    {interface}:\n      dhcp4: yes'
+            doc = f'# Configuración de red ethernet\nnetwork:\n  version: 2\n  ethernets:\n    {interface}:\n      dhcp4: yes'
         try:
             archi=open(origen, mode='w+')
             archi.write(doc)
@@ -91,11 +91,11 @@ class Network():
         buff = buff.split('/')
         address, netmask = buff[0], buff[1]
         if wifi:
-            origen = "/etc/netplan/set-network.yaml"
-            doc = f'# Let NetworkManager manage all devices on this system\nnetwork:\n  version: 2\n  renderer: NetworkManager\n  wifis:\n    {interface}:\n      dhcp4: no\n      addresses: [{address}/{netmask}]\n      gateway4: {gateway}\n      nameservers:\n        addresses: [{dns1},{dns2}]\n      access-points:\n        "{ssid}":\n          password: "{password}"'
+            origen = "/etc/netplan/set-network-wifi.yaml"
+            doc = f'# Configuración de red wifi\nnetwork:\n  version: 2\n  wifis:\n    {interface}:\n      dhcp4: no\n      addresses: [{address}/{netmask}]\n      gateway4: {gateway}\n      nameservers:\n        addresses: [{dns1},{dns2}]\n      access-points:\n        "{ssid}":\n          password: "{password}"'
         else:
-            origen = "/etc/netplan/set-network.yaml"
-            doc = f'# Let NetworkManager manage all devices on this system\nnetwork:\n  version: 2\n  renderer: NetworkManager\n  ethernets:\n    {interface}:\n      dhcp4: no\n      addresses: [{address}/{netmask}]\n      gateway4: {gateway}\n      nameservers:\n        addresses: [{dns1},{dns2}]'
+            origen = "/etc/netplan/set-network-ethernet.yaml"
+            doc = f'# Configuración de red ethernet\nnetwork:\n  version: 2\n  ethernets:\n    {interface}:\n      dhcp4: no\n      addresses: [{address}/{netmask}]\n      gateway4: {gateway}\n      nameservers:\n        addresses: [{dns1},{dns2}]'
         try:
             archi=open(origen, mode='w+')
             archi.write(doc)
@@ -103,14 +103,6 @@ class Network():
             return 0
         except OSError as err:
             return f'Error {err.args}'
-
-    @classmethod
-    def del_netold(cls, interface, address, netmask):
-        buff = ipaddress.ip_interface(f'{address}/{netmask}')
-        buff = buff.with_prefixlen.strip()
-        sub0 = subprocess.run(f'/sbin/ip addr del {buff} dev {interface}', shell=True, capture_output=True, text=True)
-        Network.logerr(f'20code:{sub0.returncode}\nout:{sub0.stdout}\nerr:{sub0.stderr}\n')
-        return sub0.returncode
 
     @classmethod
     def apply_netplan(cls):
@@ -191,6 +183,8 @@ class AccessPoint():
     def get_ap(cls):
         sub0 = subprocess.run('/bin/systemctl status create_ap.service | /bin/grep Active', shell=True, capture_output=True, text=True)
         status = sub0.stdout.strip().split()[1]
+        if status!='active':
+            status = 'inactive'
         sub1 = subprocess.run('/bin/cat /etc/create_ap.conf | /bin/grep SSID', shell=True, capture_output=True, text=True)
         ssid = sub1.stdout.strip().split('=')[1]
         sub2 = subprocess.run('/bin/cat /etc/create_ap.conf | /bin/grep PASSPHRASE', shell=True, capture_output=True, text=True)
