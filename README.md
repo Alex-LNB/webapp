@@ -1,5 +1,7 @@
 # Webapp
 
+## Cámara Termográfica Dual
+
 Aplicativo web para el registro de datos de posibles casos de Covid-19 o enfermedades que involucran temperaturas corporales altas, y para administración del dispositivo (conexión a internet y hotspot).
 
 ## Dependencias

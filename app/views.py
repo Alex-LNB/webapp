@@ -81,7 +81,7 @@ def register():
     if request.method == 'POST' and form.validate():
         user = User.create_element(form.username.data, form.password.data)
         flash(f'Usuario {user.username} creado')
-        return redirect(url_for('.register'))
+        return redirect(url_for('.lista'))
     return render_template('auth/register.html', title='Register', form=form)
 
 @page.route('/user/<int:user_id>')
@@ -129,7 +129,7 @@ def setdate():
     if request.method == 'POST' and form.validate():
         msj = Time_Local.set_timelocal(form.ntp.data,form.dt.data,form.zn.data)
         flash(f'{msj}')
-        return redirect(url_for('.setdate'))
+        return redirect(url_for('.lista'))
     return render_template('config/setdate.html', title='Datetime', form=form, dtl=dtl)
 
 @page.route('/setnet', methods=['GET','POST'])
@@ -146,7 +146,7 @@ def setnet():
         buff = AccessPoint.set_ap(form.status.data)
         y, z= Network.apply_netplan()
         flash(f'{buff} - {y}')
-        return redirect(url_for('.setnet'))
+        return redirect(url_for('.lista'))
     return render_template('config/setnet.html', title='Network', form=form, ethe=ethe, wifi=wifi)
 
 @page.route('/setnet/ethernet', methods=['GET','POST'])

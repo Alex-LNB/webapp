@@ -19,10 +19,8 @@ class Network():
     @classmethod
     def get_net(cls, interface, wifi=False):
         sub0 = subprocess.run('/bin/hostname', shell=True, capture_output=True, text=True)
-        #Network.logerr(f'00code:{sub0.returncode}\nout:{sub0.stdout}\nerr:{sub0.stderr}\n')
         hostname = sub0.stdout.strip()
         sub1 = subprocess.run(f'/sbin/ip addr show {interface} | /bin/grep inet', shell=True, capture_output=True, text=True)
-        #Network.logerr(f'01code:{sub1.returncode}\nout:{sub1.stdout}\nerr:{sub1.stderr}\n')
         if len(sub1.stdout.strip())==0:
             net = Network(interface=interface,hostname=hostname,address='',netmask='',gateway='',dhcp='',dns1='',dns2='',status=False,ssid='',password='')
             return net
@@ -33,7 +31,6 @@ class Network():
         address = buff[0]
         netmask = buff[1]
         sub2 = subprocess.run(f'/sbin/ip route | /bin/grep default | /bin/grep {interface}', shell=True, capture_output=True, text=True)
-        #Network.logerr(f'02code:{sub2.returncode}\nout:{sub2.stdout}\nerr:{sub2.stderr}\n')
         if len(sub2.stdout.strip())==0:
             gateway = ''
             dhcp = ''
@@ -42,7 +39,6 @@ class Network():
             gateway = buff[2]
             dhcp = buff[6]
         sub3 = subprocess.run(f'/usr/bin/nmcli dev show {interface} | /bin/grep IP4.DNS', shell=True, capture_output=True, text=True)
-        #Network.logerr(f'03code:{sub3.returncode}\nout:{sub3.stdout}\nerr:{sub3.stderr}\n')
         buff = sub3.stdout.strip().split('\n')
         if len(buff)==1 and len(buff[0].strip())>0:
             dns1, dns2 = buff[0].split()[1], ''
@@ -52,11 +48,10 @@ class Network():
             dns1, dns2 = '', ''
         if wifi:
             sub4 = subprocess.run(f'/bin/cat /etc/netplan/set-network-wifi.yaml | /bin/grep "\\""', shell=True, capture_output=True, text=True)
-            buff = sub4.stdout.strip().split()
-            ssid, password = buff[0][1:-2], buff[2][1:-1]
+            buff = sub4.stdout.strip().split("\n")
+            ssid, password = buff[0].strip(" :\""), buff[1].split()[1].strip("\"")
         else:
             ssid, password = '', ''
-        #print(f'-{hostname},{address},{netmask},{dhcp},{gateway},{dns1},{dns2}-')
         net = Network(interface=interface,hostname=hostname,address=address,netmask=netmask,gateway=gateway,dhcp=dhcp,dns1=dns1,dns2=dns2,status=True,ssid=ssid,password=password)
         return net
 
@@ -106,28 +101,11 @@ class Network():
 
     @classmethod
     def apply_netplan(cls):
-        #sub0 = subprocess.run('/bin/pwd', shell=True, capture_output=True, text=True)
-        #ruta = sub0.stdout.strip()+'/set_netplan.py'
-        #subX = subprocess.run(f'/bin/ls', shell=True, capture_output=True, text=True)
-        #Network.logerr(f'10code:{sub0.returncode}\nout:{sub0.stdout}-{ruta}-{subX.stdout}-\nerr:{sub0.stderr}\n')
         sub1=subprocess.run(["/usr/sbin/netplan apply"], shell=True, capture_output=True, text=True)
-        #sub1 = subprocess.run(f'/usr/bin/python3 set_netplat.py', shell=True, capture_output=True, text=True)
-        Network.logerr(f'11code:{sub1.returncode}\nout:{sub1.stdout}\nerr:{sub1.stderr}\n')
         if sub1.returncode == 0:
             return f'Netplan ejecutado con exito. {sub1.stdout}', 0
         else:
             return f'Netplan fallo la ejecucion. {sub1.stderr}', 1
-    
-    @classmethod
-    def logerr(cls, msj):
-        origen = 'logerr.txt'
-        try:
-            archi=open(origen, mode='a+')
-            archi.write(msj)
-            archi.close()
-            return 0
-        except OSError as err:
-            return f'Error {err.args}'
 
 class Time_Local():
     def __init__(self, dt, zn, ntp):
