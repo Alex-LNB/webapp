@@ -167,7 +167,7 @@ def setethe():
             flash(f'Configuracion de red actualizada - {y}')
             return redirect(url_for('.lista'))
         else:
-            flash(f'Fallo la configuracion de red - {y}','error')
+            flash(f'Fallo la configuracion de red - {x}','error')
             return redirect(url_for('.lista'))
     return render_template('config/setethe.html', title='Ethernet', net=net, form=form)
 
@@ -189,6 +189,6 @@ def setwifi():
             flash(f'Configuracion de red actualizada - {y}')
             return redirect(url_for('.lista'))
         else:
-            flash(f'Fallo la configuracion de red - {y}','error')
+            flash(f'Fallo la configuracion de red - {x}','error')
             return redirect(url_for('.lista'))
     return render_template('config/setwifi.html', title='Wifi', net=net, form=form)
